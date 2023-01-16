@@ -3,8 +3,6 @@ from random import randint
 from tkinter import *
 from tkinter import ttk
 
-
-
 from slojka import StateMacine, States
 
 mashine = StateMacine()
@@ -15,6 +13,9 @@ config = {
     States.Difficult: {'min': -1000, 'max': 1000, 'tries': 12}
 }
 
+global gues
+global new_window_2
+global txt
 
 def difficulty_selection():
     new_window_1 = Tk()
@@ -41,6 +42,7 @@ def difficulty_selection():
 # def name_player():     получаем введенное имя
 #     Label["text"] = Entry.get()
 
+
 def name():
     new_window_5 = Tk()
     new_window_5.title('Имя Игрока')
@@ -49,7 +51,7 @@ def name():
                     command=new_window_5.destroy)
     btn_1_1.grid(row=1, column=0, padx=5, pady=0)
     btn_1_2 = Button(new_window_5, text='Играем!', bg='white', fg='black', font=('Times New Roman', 25),
-                     command=game)
+                     command=new_window_5.destroy and game)
     btn_1_2.grid(row=1, column=3, padx=0, pady=0)
     txt = Entry(new_window_5, width=35)
     txt.grid(row=0, column=1, padx=100, pady=150)
@@ -58,6 +60,8 @@ def name():
 
 
 def game():
+    global txt
+    global new_window_2
     new_window_2 = Tk()
     new_window_2.title('Игра "Угадай число')
     new_window_2.geometry('1600x1000')
@@ -67,9 +71,10 @@ def game():
     frame = LabelFrame(new_window_2, padx=200, pady=100)
     frame.place(x=900, y=100)
 
-    global txt
+
     txt = Entry(frame, width=20)
     txt.grid(row=4, column=0, columnspan=5, padx=1, pady=100)
+
 
     btn_0_0 = Button(frame, text=1, bg='white', fg='black', font=('Times New Roman', 20),
                      command=lambda: set_txt(txt, "1"))
@@ -107,22 +112,72 @@ def game():
     btn_11 = Button(frame, text="-", bg='white', fg='black', font=('Times New Roman', 20),
                     command=lambda: set_minuse(txt))
     btn_11.grid(row=3, column=2)
-    btn_12 = Button(new_window_2, text="Играем!", bg='white', fg='black', font=('Times New Roman', 20),
+    btn_12 = Button(new_window_2, text="Попробовать число!", bg='white', fg='black', font=('Times New Roman', 20),
                     command=games)
     btn_12.grid(row=3, column=3, padx=430, pady=890)
     btn_13 = Button(new_window_2, text="Изменить сложность!", bg='white', fg='black', font=('Times New Roman', 20),
-                    command=difficulty_selection and new_window_2.destroy)
+                    command=difficulty_selection)
     btn_13.grid(row=3, column=0, padx=100, pady=10)
     btn_14 = Button(new_window_2, text="Правила игры!", bg='white', fg='black', font=('Times New Roman', 20),
                     command=game_rules)
     btn_14.grid(row=3, column=1, padx=0, pady=20)
 
-def clear(game):
-    txt.delete("0", END)
+def games():                                                       # здесь
+    global new_window_2
+    global txt
+    global gues
+    frame_2 = LabelFrame(new_window_2, padx=300, pady=320)
+    frame_2.place(x=10, y=70)
 
-def games():
-    pass
-     # label["txt"] = entry.get()
+    btn_0_0 = Button(frame_2, text=1, bg='white', fg='black', font=('Times New Roman', 20),
+                     command=lambda: set_txt(txt, "1"))
+    btn_0_0.grid(row=0, column=0, pady=1, padx=1)
+
+    tries = 0
+    while True:
+        msg = txt.get()
+        int(msg)
+        if msg == gues:
+            tries += 1
+            print("Поздравляем ты угадал, использовав {'tries'} попыток!")
+            break
+        elif msg < gues:
+            print('Твое число меньше загаданного числа')
+            tries += 1
+        elif msg > gues:
+            print('Твое число больше загаданного числа')
+            tries += 1
+        else:
+            print('К сожалению вы использовали все свои попытки.')
+            break
+
+def oops():                 # кончились попытки повтор игры?
+    new_window_6 = Tk()
+    new_window_6.title('Упс!')
+    new_window_6.geometry('530x300')
+    btnn0 = Label(new_window_6, text='У вас кончились попытки.\nСыграем еще?', bg='white', fg='black', font=('Times New Roman', 20))
+    btnn0.grid(row=0, column=1, ipadx=5, ipady=10, sticky=W, padx=0, pady=55)
+    btnn1 = Button(new_window_6, text='Нет', bg='white', fg='black', font=('Times New Roman', 20),
+                   command=new_window_6.quit)
+    btnn1.grid(row=1, column=0, pady=20, padx=20)
+    btnn2 = Button(new_window_6, text='Да', bg='white', fg='black', font=('Times New Roman', 20),
+                   command=game)
+    btnn2.grid(row=1, column=2, pady=20, padx=20)
+def congratulations():    # окно повтора игры
+    new_window_5 = Tk()
+    new_window_5.title('Вы выйграли!!')
+    new_window_5.geometry('550x300')
+    btnn0 = Label(new_window_5, text='Поздравляем!!!Сыграем еще?', bg='white', fg='black', font=('Times New Roman', 20))
+    btnn0.grid(row=0, column=1, ipadx=5, ipady=10, sticky=W, padx=0, pady=80)
+    btnn1 = Button(new_window_5, text='Нет', bg='white', fg='black', font=('Times New Roman', 20),
+                     command=new_window_5.quit)
+    btnn1.grid(row=1, column=0, pady=20, padx=20)
+    btnn2 = Button(new_window_5, text='Да', bg='white', fg='black', font=('Times New Roman', 20),
+                     command=game)
+    btnn2.grid(row=1, column=2, pady=20, padx=20)
+def clear():
+    txt.delete(0, END)
+
 
 def pr(txt):
     value = txt.get()
@@ -156,7 +211,7 @@ def game_rules():
 
 
 
-def leaderboard():
+def leaderboard():                                    #почему то не высвечивается шапка таблицы лидеров
     new_window_4 = Tk()
     new_window_4.title("Таблица лидеров")
     new_window_4.geometry("800x1000")
